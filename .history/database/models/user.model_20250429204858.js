@@ -1,0 +1,4 @@
+
+const userModel = (sequelize,dA) =>{
+
+}

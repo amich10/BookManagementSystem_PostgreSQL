@@ -1,0 +1,3 @@
+const ProductModel = (sequelize,da) =>{
+
+}
