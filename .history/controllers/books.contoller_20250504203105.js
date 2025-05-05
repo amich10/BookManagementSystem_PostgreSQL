@@ -1,3 +1,4 @@
+
 const { books } = require("../database/connection");
 
 exports.getAllbooks = async (req, res) => {
@@ -10,21 +11,23 @@ exports.getAllbooks = async (req, res) => {
   });
 };
 
-exports.getSingleBookByPk = async (req, res) => {
-  const bookId = req.params.id;
-  const existsBook = await books.findByPk(bookId);
-  // const existsBook = await books.findAll({where:{bookId}}) //always returns array
 
-  if (!existsBook) {
-    return res.status(404).json({
-      message: "Book not found",
+exports.getSingleBookByPk = async(req, res) =>{
+
+    const bookId  = req.params.id;
+    const existsBook = await books.findByPk(bookId)
+    // const existsBook = await books.findAll({where:{bookId}}) //always returns array
+
+    if(!existsBook){
+        return res.status(404).json({
+            message:"Book not found"
+        });
+    }
+    res.json({
+        data:existsBook,
+        message:"Boook fetched By id"
     });
-  }
-  res.json({
-    data: existsBook,
-    message: "Boook fetched By id",
-  });
-};
+}
 
 exports.createBooks = async (req, res) => {
   // console.log(req.body) // data send from postment consoles here
@@ -45,7 +48,7 @@ exports.createBooks = async (req, res) => {
   }
 
   //check if existing book exists
-  const existsBook = await books.findOne({ where: { bookName: bookName } });
+  const existsBook = await books.findOne({ where: { bookName : bookName } });
   if (existsBook) {
     return res.status(409).json({
       message: "Book with this name already exists. Please, change book name.",
@@ -64,62 +67,52 @@ exports.createBooks = async (req, res) => {
   });
 };
 
-exports.updateBookById = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const book = await books.findByPk(id);
-    if (!book) {
-      return res.status(404).json({
-        message: "Book is not found",
-      });
-    }
-    //kk update garne
-    const { bookName, bookPrice, bookAuthor, bookGenre } = req.body;
-    //update
-    await books.update(
-      {
-        bookName: bookName,
-        bookPrice: bookPrice,
-        bookAuthor: bookAuthor,
-        bookGenre: bookGenre,
-      },
-      {
-        where: { id: id },
-      }
-    ); //(data to be updated,id)
 
-    //retrieve updated book
-    const updatedBook = await books.findByPk(id); // Fetch the updated record
-    res.json({
-      message: "Book updated successfully",
-      data: updatedBook,
-    });
-  } catch (exception) {
-    console.log(exception);
+exports.updateBookById = async (req, res) => {
+  const id = req.params.id;
+  const book = await books.findByPk(id)
+  if(!book){
+    res.status(404).json({
+      message:"Book is not found"
+    })
   }
+  //kk update garne
+  const {bookName,bookPrice,bookAuthor,bookGenre} = req.body
+  //update
+  const updatedBook = await ooks.update({bookName:bookName,bookPrice:bookPrice,bookAuthor:bookAuthor,bookGenre:bookGenre},{
+    where:{id:id}
+  }) //(data to be updated,id)
+  res.json({
+    message:"Book updated sucessfully",
+    book
+  })
+
+  res.json({
+    message: "Book updated",
+  });
 };
 
 exports.deleteBookById = async (req, res) => {
   const id = req.params.id;
   // const bookId = req.body.id (book id sent from body)
-  const book = await books.findByPk(id);
-  if (!book) {
+  const book = await books.findByPk(id)
+  if(!book){
     res.status(404).json({
-      message: "Book not found",
-      status: "BOOK_NOT_FOUND",
-    });
+      message:"Book not found",
+      status:"BOOK_NOT_FOUND"
+    })
   }
-  await books.destroy({ where: { id } }); //{where:{id:id}}
+  await books.destroy({where:{id}})  //{where:{id:id}}
   res.json({
     message: "Book deleted successfully",
   });
 
   //delete all book
-  /*  await User.destroy({
+ /*  await User.destroy({
     where: {}, // no condition = delete all
     truncate: true // optional: resets the auto-increment counter
   }); */
 };
 
-//module.exports = {getAllbooks,createBooks,updateBook,deleteBook}
 
+//module.exports = {getAllbooks,createBooks,updateBook,deleteBook}

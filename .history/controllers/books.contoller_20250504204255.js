@@ -122,4 +122,3 @@ exports.deleteBookById = async (req, res) => {
 };
 
 //module.exports = {getAllbooks,createBooks,updateBook,deleteBook}
-
